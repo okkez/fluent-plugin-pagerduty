@@ -1,7 +1,7 @@
 require 'pagerduty'
 require 'fluent/plugin/output'
 
-class Fluent::PagerdutyOutput < Fluent::Plugin::Output
+class Fluent::Plugin::PagerdutyOutput < Fluent::Plugin::Output
   Fluent::Plugin.register_output('pagerduty', self)
 
   config_param :service_key, :string, default: nil
