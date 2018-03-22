@@ -58,7 +58,7 @@ class Fluent::Plugin::PagerdutyOutput < Fluent::Plugin::Output
       end
 
       incident = api.trigger description, options
-    rescue => e
+    rescue PagerdutyException => e
       log.error "pagerduty: request failed. ", error_class: e.class, error: e.message
     end
   end
