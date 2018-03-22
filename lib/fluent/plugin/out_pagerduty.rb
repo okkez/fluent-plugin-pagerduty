@@ -1,10 +1,7 @@
+require 'pagerduty'
+
 class Fluent::PagerdutyOutput < Fluent::Output
   Fluent::Plugin.register_output('pagerduty', self)
-
-  def initialize
-    require 'pagerduty'
-    super
-  end
 
   config_param :service_key, :string, :default => nil
   config_param :event_type, :string, :default => 'trigger'
