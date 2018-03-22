@@ -1,6 +1,7 @@
 require 'pagerduty'
+require 'fluent/plugin/output'
 
-class Fluent::PagerdutyOutput < Fluent::Output
+class Fluent::PagerdutyOutput < Fluent::Plugin::Output
   Fluent::Plugin.register_output('pagerduty', self)
 
   config_param :service_key, :string, :default => nil
@@ -22,12 +23,10 @@ class Fluent::PagerdutyOutput < Fluent::Output
     end
   end
 
-  def emit(tag, es, chain)
+  def process(tag, es)
     es.each do |time,record|
       call_pagerduty(tag, record)
     end
-
-    chain.next
   end
 
   def call_pagerduty(tag, record)
