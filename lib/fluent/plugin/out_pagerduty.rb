@@ -4,10 +4,10 @@ require 'fluent/plugin/output'
 class Fluent::PagerdutyOutput < Fluent::Plugin::Output
   Fluent::Plugin.register_output('pagerduty', self)
 
-  config_param :service_key, :string, :default => nil
-  config_param :event_type, :string, :default => 'trigger'
-  config_param :description, :string, :default => nil
-  config_param :incident_key, :string, :default => nil
+  config_param :service_key, :string, default: nil
+  config_param :event_type, :string, default: 'trigger'
+  config_param :description, :string, default: nil
+  config_param :incident_key, :string, default: nil
 
   def configure(conf)
     super
@@ -31,7 +31,7 @@ class Fluent::PagerdutyOutput < Fluent::Plugin::Output
 
   def call_pagerduty(tag, record)
     begin
-      expander = PlaceholderExpander.new({:log => log})
+      expander = PlaceholderExpander.new({log: log})
       tag_parts = tag.split('.')
       placeholder_values = {
         'tag'       => tag,
@@ -59,7 +59,7 @@ class Fluent::PagerdutyOutput < Fluent::Plugin::Output
 
       incident = api.trigger description, options
     rescue => e
-      $log.error "pagerduty: request failed. ", :error_class=>e.class, :error=>e.message
+      $log.error "pagerduty: request failed. ", error_class: e.class, error: e.message
     end
   end
 end
