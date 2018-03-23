@@ -2,7 +2,12 @@ require "helper"
 
 class PagerduryOutputTest < Test::Unit::TestCase
   setup do
+    @tmpdir = File.join(Dir.tmpdir, "pagerduty-buffer")
     Fluent::Test.setup
+  end
+
+  teardown do
+    FileUtils.rm_rf(@tmpdir)
   end
 
   def create_driver(conf)
@@ -14,6 +19,9 @@ class PagerduryOutputTest < Test::Unit::TestCase
       conf = %[
         service_key xxx
         description test
+        <buffer tag>
+          path #{@tmpdir}
+        </buffer>
       ]
       d = create_driver(conf)
       record = { "log" => "This is test" }
@@ -29,6 +37,9 @@ class PagerduryOutputTest < Test::Unit::TestCase
         service_key xxx
         description test
         incident_key incident
+        <buffer tag>
+          path #{@tmpdir}
+        </buffer>
       ]
       d = create_driver(conf)
       record = { "log" => "This is test", "incident" => "serious" }
@@ -44,6 +55,9 @@ class PagerduryOutputTest < Test::Unit::TestCase
         conf = %[
           service_key xxx
           description dummy.${tag}.${level}
+          <buffer tag,level>
+            path #{@tmpdir}
+          </buffer>
         ]
         d = create_driver(conf)
         record = { "log" => "This is test", "incident" => "serious", "level" => "INFO" }
@@ -57,9 +71,12 @@ class PagerduryOutputTest < Test::Unit::TestCase
       test "nested record" do
         conf = %[
           service_key xxx
-          description Alarm@${Node["Location"]}:: ${Log["Message"]}
-          incident_key ${tag_parts[-1]} ${Log["File"]}:${Log["Line"]}
-        ]
+          description Alarm@${$.Node.Location}:: ${$.Log.Message}
+          incident_key ${tag[1]} ${$.Log.File}:${$.Log.Line}
+          <buffer tag,$.Log.File,$.Log.Line,$.Log.Message,$.Node.Location>
+            path #{@tmpdir}
+          </buffer>
+      ]
         d = create_driver(conf)
         record = {
           "Node" => {

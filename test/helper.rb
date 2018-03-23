@@ -1,6 +1,8 @@
 require 'bundler/setup'
 require 'test/unit'
 require 'test/unit/rr'
+require 'tmpdir'
+require 'fileutils'
 
 $LOAD_PATH.unshift(File.join(__dir__, '..', 'lib'))
 $LOAD_PATH.unshift(__dir__)
