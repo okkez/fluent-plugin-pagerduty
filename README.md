@@ -79,8 +79,11 @@ In this example, a JSON record is referenced to build a PagerDuty event with an 
 <match notify.pagerduty>
   @type pagerduty
   service_key   ******************
-  description   Alarm@${Node["Location"]}:: ${Log["Message"]}
-  incident_key  [${tag_parts[-1]}] ${Log["File"]}:${Log["Line"]}
+  description Alarm@${$.Node.Location}:: ${$.Log.Message}
+  incident_key ${tag[1]} ${$.Log.File}:${$.Log.Line}
+  <buffer tag,$.Log.File,$.Log.Line,$.Log.Message,$.Node.Location>
+    path /tmp/pagerduty-buffer
+  </buffer>
 </match>
 ```
 
@@ -113,18 +116,7 @@ $ curl http://localhost:8888/notify.pagerduty -F 'json={"Node":{"Location":"Some
 
 ### Placeholders
 
-These placeholders are available:
-
-* ${…}
-  * `hashName["key"]` Value of `key` in named hash
-  * `arrayName[N]` Value at index _N_ in named array
-  * `primitive` Value of named primitive
-  
-    Placeholders are built recursively and concatenated. For example, a specific value within a hash containing an array of hashes could be referenced as: `${foo["bar"][2]["baz"]}`.
-* ${tag} Input tag
-* ${tag\_parts[N]} Input tag splitted by '.' indexed with _N_ such as `${tag_parts[0]}`, `${tag_parts[-1]}`. 
-
-Placeholder functionality is derived from features of [fluent-plugin-record-reformer](https://github.com/sonots/fluent-plugin-record-reformer).
+See [Buffer section configurations](https://docs.fluentd.org/v1.0/articles/buffer-section).
 
 ## Contributing
 
