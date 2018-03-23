@@ -4,7 +4,7 @@ require 'fluent/plugin/output'
 class Fluent::Plugin::PagerdutyOutput < Fluent::Plugin::Output
   Fluent::Plugin.register_output('pagerduty', self)
 
-  config_param :service_key, :string, default: nil
+  config_param :service_key, :string, secret: true
   config_param :event_type, :string, default: 'trigger'
   config_param :description, :string, default: nil
   config_param :incident_key, :string, default: nil
@@ -17,11 +17,6 @@ class Fluent::Plugin::PagerdutyOutput < Fluent::Plugin::Output
 
   def configure(conf)
     super
-
-    # API requires service key
-    if @service_key.nil?
-      $log.warn "pagerduty: service_key required."
-    end
 
     # PagerDuty trigger event type requires description, other event types do not
     if @event_type == 'trigger' && @description.nil?
@@ -42,7 +37,6 @@ class Fluent::Plugin::PagerdutyOutput < Fluent::Plugin::Output
 
   def call_pagerduty(metadata, record)
     begin
-      service_key = record['service_key'] || @service_key
       event_type = record['event_type'] || @event_type
       description = record['description'] || record['message'] || @description
       incident_key = record['incident_key'] || @incident_key
@@ -53,9 +47,9 @@ class Fluent::Plugin::PagerdutyOutput < Fluent::Plugin::Output
       
       if !@incident_key.nil?
         incident_key = extract_placeholders(incident_key, metadata)
-        api = PagerdutyIncident.new(service_key, incident_key)
+        api = PagerdutyIncident.new(@service_key, incident_key)
       else
-        api = Pagerduty.new(service_key)
+        api = Pagerduty.new(@service_key)
       end
 
       incident = api.trigger description, options
