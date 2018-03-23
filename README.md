@@ -2,16 +2,20 @@
 
 Fluentd Output plugin to relay alert notification from application to [PagerDuty](http://www.pagerduty.com/).
 
+## Requirements
+
+| fluent-plugin-pagerduty | fluentd    | ruby   |
+|-------------------------|------------|--------|
+| >= 1.0.0                | >= v1.0.0  | >= 2.1 |
+| < 1.0.0                 | >= v0.12.0 | >= 1.9 |
+
 ## Installation
 
 install with `td-agnet-gem` or `fluent-gem`, `gem` command as:
 
 ```
-# for td-agent2 (recommend)
-$ sudo td-agent-gem install fluent-plugin-pagerduty -v 0.0.1
-
-# for td-agent
-$ sudo /usr/lib64/fluent/ruby/bin/fluent-gem install fluent-plugin-pagerduty -v 0.0.1
+# for td-agent3 (recommend)
+$ sudo td-agent-gem install fluent-plugin-pagerduty
 
 # for system installed fluentd
 $ gem install fluent-plugin-pagerduty
