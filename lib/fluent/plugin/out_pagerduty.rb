@@ -19,7 +19,7 @@ class Fluent::Plugin::PagerdutyOutput < Fluent::Plugin::Output
     super
 
     # PagerDuty trigger event type requires description, other event types do not
-    if @event_type == 'trigger' && @description.nil?
+    if @description.nil?
       $log.warn "pagerduty: description required for trigger event_type."
     end
   end
@@ -37,7 +37,6 @@ class Fluent::Plugin::PagerdutyOutput < Fluent::Plugin::Output
 
   def call_pagerduty(metadata, record)
     begin
-      event_type = record['event_type'] || @event_type
       description = record['description'] || record['message'] || @description
       incident_key = record['incident_key'] || @incident_key
       details = record['details'] || record
